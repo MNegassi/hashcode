@@ -1,3 +1,5 @@
+import pprint
+
 class Parser:
     def __init__(self, f):
         self.config = None
@@ -30,12 +32,10 @@ class Parser:
         self.timeline_earliest_start[passenger['earliest_start']].append(pid)
         self.timeline_latest_finish[passenger['latest_finish']].append(pid)
 
-
-
     def __repr__(self):
         s = 'config: %s\npassengers: %s\ntimeline_latest_finish: %s\ntimeline_earliest_start: %s' % (
                 str(self.config),
-                str(self.passengers),
+                pprint.pformat(self.passengers),
                 str(self.timeline_latest_finish),
                 str(self.timeline_earliest_start)
             )
@@ -84,5 +84,29 @@ def splitLineToInts(l):
     return list(map(lambda s: int(s), l.strip().split(" ")))
 
 if __name__ == '__main__':
-    parser = Parser('example_in.txt')
+    parser = Parser('data/a_example.in')
     print(parser)
+    all_fetched_pids = []
+    for carId in range(0, 1):
+        fetched_pids = []
+        step = 0
+        position = (0, 0)
+        print("a")
+        while step < parser.config['steps']:
+            possible_pids = []
+
+            for pids in parser.timeline_earliest_start[step:]:
+                print(pids)
+                for pid in pids:
+                    if pid in fetched_pids:
+                        continue
+                    passenger = parser.passengers[pid]
+                    distance_to_cur_pos = calcDistance(
+                        position,
+                        passenger['start_point'])
+
+                    print(carId, position, pid, distance_to_cur_pos)
+                    #all_fetched_pids.append(pid)
+                    #fetched_pids.append(pid)
+            step += 1
+
